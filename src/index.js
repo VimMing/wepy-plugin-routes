@@ -1,4 +1,4 @@
-export function getPaths() {
+export function getPaths(routes) {
     let paths = []
     let recursive = function (obj) {
         let tempArr = Object.values(obj)
@@ -30,8 +30,8 @@ export default class {
             let parse = JSON.parse(op.code)
             let paths = getPaths(this.setting.routes)
             let launchPage = ''
-            paths = [...paths, ...parse.pages]
-            paths.filter((item) => {
+            paths = Array.from(new Set([...paths, ...parse.pages]))
+            paths = paths.filter((item) => {
                 if (item.startsWith('^')) {
                     launchPage = item.replace('^', '')
                     return false

@@ -8,7 +8,7 @@ exports.getPaths = getPaths;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function getPaths() {
+function getPaths(routes) {
     var paths = [];
     var recursive = function recursive(obj) {
         var tempArr = Object.values(obj);
@@ -58,8 +58,8 @@ var _class = function () {
             var parse = JSON.parse(op.code);
             var paths = getPaths(this.setting.routes);
             var launchPage = '';
-            paths = [].concat(paths, parse.pages);
-            paths.filter(function (item) {
+            paths = Array.from(new Set([].concat(paths, parse.pages)));
+            paths = paths.filter(function (item) {
                 if (item.startsWith('^')) {
                     launchPage = item.replace('^', '');
                     return false;
