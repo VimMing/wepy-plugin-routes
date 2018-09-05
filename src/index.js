@@ -30,7 +30,6 @@ export default class {
             let parse = JSON.parse(op.code)
             let paths = getPaths(this.setting.routes)
             let launchPage = ''
-            paths = Array.from(new Set([...paths, ...parse.pages]))
             paths = paths.filter((item) => {
                 if (item.startsWith('^')) {
                     launchPage = item.replace('^', '')
@@ -38,10 +37,11 @@ export default class {
                 }
                 return true
             })
-            parse.pages = paths
             if (launchPage) {
-                parse.pages.unshift(launchPage)
+                paths.unshift(launchPage)
             }
+            paths = Array.from(new Set([...paths, ...parse.pages]))
+            parse.pages = paths
             op.code = JSON.stringify(parse)
         }
         op.next()

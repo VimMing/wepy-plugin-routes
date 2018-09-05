@@ -58,7 +58,6 @@ var _class = function () {
             var parse = JSON.parse(op.code);
             var paths = getPaths(this.setting.routes);
             var launchPage = '';
-            paths = Array.from(new Set([].concat(paths, parse.pages)));
             paths = paths.filter(function (item) {
                 if (item.startsWith('^')) {
                     launchPage = item.replace('^', '');
@@ -66,10 +65,11 @@ var _class = function () {
                 }
                 return true;
             });
-            parse.pages = paths;
             if (launchPage) {
-                parse.pages.unshift(launchPage);
+                paths.unshift(launchPage);
             }
+            paths = Array.from(new Set([].concat(paths, parse.pages)));
+            parse.pages = paths;
             op.code = JSON.stringify(parse);
         }
         op.next();

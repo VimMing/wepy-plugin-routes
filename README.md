@@ -1,4 +1,4 @@
-# wepy框架px2units插件
+# wepy框架routes插件
 
 [![npm version](https://badge.fury.io/js/wepy-plugin-routes.svg)](https://badge.fury.io/js/wepy-plugin-routes)
 [![change-log](https://img.shields.io/badge/changelog-md-blue.svg)](https://github.com/VimMing/wepy-plugin-routes/blob/master/CHANGELOG.md)
