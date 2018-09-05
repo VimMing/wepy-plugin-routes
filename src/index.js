@@ -1,37 +1,49 @@
-import postcss from 'postcss';
-import px2units from 'postcss-px2units';
+export function getPaths() {
+    let paths = []
+    let recursive = function (obj) {
+        let tempArr = Object.values(obj)
+        for (let item of tempArr) {
+            if (typeof item === 'string') {
+                item = item.replace('/pages', 'pages')
+                paths.push(item)
+            }
+            if (typeof item === 'object') {
+                recursive(item)
+            }
+        }
+    }
+    recursive(routes)
+    return paths
+}
 
 export default class {
-
     constructor(c = {}) {
         const def = {
-            filter: new RegExp('\.(wxss)$'),
-            config: {}
+            filter: new RegExp('app\.json$'),
+            routes: {}
         };
 
         this.setting = Object.assign({}, def, c);
     }
-    apply (op) {
-
-        let setting = this.setting;
-
-        if (!setting.filter.test(op.file)) {
-            op.next();
-        } else {
-            op.output && op.output({
-                action: '变更',
-                file: op.file
-            });
-
-            let prefixer = postcss([ px2units(this.setting.config) ]);
-
-            prefixer.process(op.code, { from: op.file }).then((result) => {
-                op.code = result.css;
-                op.next();
-            }).catch(e => {
-                op.err = e;
-                op.catch();
-            });
+    apply(op) {
+        if (op.type === 'config' && this.setting.filter.test(op.file)) {
+            let parse = JSON.parse(op.code)
+            let paths = getPaths(this.setting.routes)
+            let launchPage = ''
+            paths = [...paths, ...parse.pages]
+            paths.filter((item) => {
+                if (item.startsWith('^')) {
+                    launchPage = item.replace('^', '')
+                    return false
+                }
+                return true
+            })
+            parse.pages = paths
+            if (launchPage) {
+                parse.pages.unshift(launchPage)
+            }
+            op.code = JSON.stringify(parse)
         }
+        op.next()
     }
 }
