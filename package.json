@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-routes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "wepy routes plugin",
   "main": "dist/index.js",
   "scripts": {
