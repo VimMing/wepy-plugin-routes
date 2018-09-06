@@ -72,6 +72,16 @@ var _class = function () {
             parse.pages = paths;
             op.code = JSON.stringify(parse);
         }
+        if (op.type === '' && /pages\/.+\.js$/.test(op.file)) {
+            var code = op.code.replace(/exports\.default\s*=\s*(\w+);/ig, function (m, defaultExport) {
+                if (defaultExport === 'undefined') {
+                    return '';
+                }
+                var pagePath = /(pages\/.+)\.js$/.exec(op.file);
+                return '\nPage(_wepy.default.$createPage(' + defaultExport + ' , \'' + pagePath[1] + '\'));\n';
+            });
+            op.code = code;
+        }
         op.next();
     };
 

@@ -25,6 +25,7 @@ export default class {
 
         this.setting = Object.assign({}, def, c);
     }
+
     apply(op) {
         if (op.type === 'config' && this.setting.filter.test(op.file)) {
             let parse = JSON.parse(op.code)
@@ -43,6 +44,16 @@ export default class {
             paths = Array.from(new Set([...paths, ...parse.pages]))
             parse.pages = paths
             op.code = JSON.stringify(parse)
+        }
+        if (op.type === '' && /pages\/.+\.js$/.test(op.file)) {
+            let code = op.code.replace(/exports\.default\s*=\s*(\w+);/ig, function (m, defaultExport) {
+                if (defaultExport === 'undefined') {
+                    return '';
+                }
+                let pagePath = /(pages\/.+)\.js$/.exec(op.file)
+                return '\nPage(_wepy.default.$createPage(' + defaultExport + ' , \'' + pagePath[1] + '\'));\n';
+            })
+            op.code = code
         }
         op.next()
     }
