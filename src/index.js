@@ -45,12 +45,13 @@ export default class {
             parse.pages = paths
             op.code = JSON.stringify(parse)
         }
-        if (op.type === '' && /pages\/.+\.js$/.test(op.file)) {
+        if (op.type === '' && /pages.+\.js$/.test(op.file)) {
             let code = op.code.replace(/exports\.default\s*=\s*(\w+);/ig, function (m, defaultExport) {
                 if (defaultExport === 'undefined') {
                     return '';
                 }
-                let pagePath = /(pages\/.+)\.js$/.exec(op.file)
+                let pagePath = /(pages.+)\.js$/.exec(op.file)
+                pagePath[1] = pagePath[1].replace('\\', '/')
                 return '\nPage(_wepy.default.$createPage(' + defaultExport + ' , \'' + pagePath[1] + '\'));\n';
             })
             op.code = code
